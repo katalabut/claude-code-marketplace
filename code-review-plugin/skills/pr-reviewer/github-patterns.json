@@ -1,0 +1,146 @@
+{
+  "description": "Common GitHub PR patterns and anti-patterns for automated detection",
+  "version": "1.0.0",
+  "patterns": {
+    "commit_message_conventions": [
+      "feat: New feature",
+      "fix: Bug fix",
+      "docs: Documentation changes",
+      "style: Code style changes (formatting, etc.)",
+      "refactor: Code refactoring",
+      "perf: Performance improvements",
+      "test: Adding or updating tests",
+      "chore: Maintenance tasks",
+      "ci: CI/CD changes",
+      "build: Build system changes",
+      "revert: Revert previous commit"
+    ],
+    "pr_size_thresholds": {
+      "small": {
+        "max_files": 10,
+        "max_lines": 200,
+        "review_time_estimate": "5-10 minutes"
+      },
+      "medium": {
+        "max_files": 30,
+        "max_lines": 500,
+        "review_time_estimate": "20-30 minutes"
+      },
+      "large": {
+        "max_files": 999999,
+        "max_lines": 999999,
+        "review_time_estimate": "1+ hours",
+        "recommendation": "Consider breaking into smaller PRs"
+      }
+    },
+    "security_keywords": [
+      "password",
+      "secret",
+      "api_key",
+      "token",
+      "credential",
+      "auth",
+      "private_key",
+      "access_token",
+      "session",
+      "cookie"
+    ],
+    "critical_files": [
+      "Dockerfile",
+      "docker-compose.yml",
+      ".env",
+      ".env.example",
+      "config/database.yml",
+      "package.json",
+      "go.mod",
+      "requirements.txt",
+      "Pipfile",
+      "pom.xml",
+      "build.gradle"
+    ],
+    "documentation_files": [
+      "README.md",
+      "CHANGELOG.md",
+      "CONTRIBUTING.md",
+      "docs/**/*.md",
+      "API.md",
+      "SECURITY.md"
+    ],
+    "breaking_change_indicators": [
+      "BREAKING CHANGE",
+      "breaking:",
+      "!:",
+      "removed:",
+      "deprecated:",
+      "renamed:"
+    ],
+    "quality_checks": {
+      "title": {
+        "min_length": 10,
+        "should_not_start_with": ["WIP", "Draft", "test", "TEST"],
+        "should_match_convention": true
+      },
+      "description": {
+        "min_length": 50,
+        "should_contain": ["what", "why"],
+        "should_reference_issue": true
+      },
+      "commits": {
+        "should_not_contain": ["fixup!", "squash!", "WIP", "wip", "temp"],
+        "max_count_recommendation": 10
+      }
+    },
+    "required_labels": {
+      "type": ["bug", "enhancement", "feature", "documentation", "refactor"],
+      "priority": ["critical", "high", "medium", "low"],
+      "area": ["frontend", "backend", "database", "infrastructure", "security"]
+    },
+    "code_review_checklist": [
+      "Security vulnerabilities addressed",
+      "Unit tests included",
+      "Integration tests included (if applicable)",
+      "Documentation updated",
+      "Breaking changes documented",
+      "Error handling implemented",
+      "Logging added for important operations",
+      "Performance implications considered",
+      "Backward compatibility maintained",
+      "Database migrations included (if needed)",
+      "API changes documented",
+      "Configuration changes documented"
+    ],
+    "github_comment_templates": {
+      "critical_security": "🚨 **CRITICAL SECURITY ISSUE**\n\n**Issue**: {issue_description}\n\n**Risk**: {risk_description}\n\n**Recommendation**: {fix_description}\n\n```suggestion\n{suggested_code}\n```",
+      "bug": "🐛 **Bug Found**\n\n**Issue**: {issue_description}\n\n**Impact**: {impact_description}\n\n**Suggested Fix**:\n```suggestion\n{suggested_code}\n```",
+      "improvement": "💡 **Improvement Suggestion**\n\n{suggestion_description}\n\n**Benefit**: {benefit_description}\n\n**Example**:\n```suggestion\n{suggested_code}\n```",
+      "question": "❓ **Question**\n\n{question}\n\nCould you clarify the reasoning behind this approach?",
+      "praise": "✨ **Nice Work!**\n\n{praise_description}",
+      "nitpick": "🔧 **Nitpick** (non-blocking)\n\n{nitpick_description}"
+    },
+    "ci_cd_checks": [
+      "tests",
+      "lint",
+      "build",
+      "security-scan",
+      "coverage",
+      "integration-tests",
+      "e2e-tests",
+      "performance-tests"
+    ],
+    "merge_requirements": {
+      "minimum": [
+        "All CI checks passing",
+        "At least one approval",
+        "No merge conflicts",
+        "Branch up to date with base"
+      ],
+      "recommended": [
+        "All comments resolved",
+        "Code coverage maintained or improved",
+        "Documentation reviewed",
+        "Security scan passed",
+        "Performance benchmarks acceptable"
+      ]
+    }
+  }
+}

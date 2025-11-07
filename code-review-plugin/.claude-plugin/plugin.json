@@ -1,0 +1,10 @@
+{
+  "name": "code-review-plugin",
+  "description": "Comprehensive code review plugin that analyzes code quality, security vulnerabilities, and documentation. Supports PR reviews and local changes for Go, Python, and JavaScript/TypeScript projects.",
+  "version": "1.0.0",
+  "author": {
+    "name": "katalabut"
+  },
+  "keywords": ["code-review", "security", "quality", "pull-request", "static-analysis"],
+  "license": "MIT"
+}

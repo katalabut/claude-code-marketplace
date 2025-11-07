@@ -1,0 +1,13 @@
+{
+    "name": "claude-code-marketplace",
+    "owner": {
+        "name": "katalabut"
+    },
+    "plugins": [
+        {
+            "name": "code-review-plugin",
+            "source": "./code-review-plugin",
+            "description": "Comprehensive code review plugin with security analysis, quality checks, and PR review capabilities. Supports Go, Python, and JavaScript/TypeScript with GitHub integration."
+        }
+    ]
+}

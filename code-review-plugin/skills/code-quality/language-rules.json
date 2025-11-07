@@ -1,0 +1,271 @@
+{
+  "description": "Language-specific code quality rules and patterns for Go, Python, and JavaScript/TypeScript",
+  "version": "1.0.0",
+  "languages": {
+    "go": {
+      "best_practices": [
+        "Always check returned errors",
+        "Use context.Context for cancellation and timeouts",
+        "Prefer pointer receivers for methods that modify state",
+        "Use defer for cleanup, but not in loops",
+        "Close goroutines properly to avoid leaks",
+        "Use meaningful error messages with context",
+        "Follow standard project layout",
+        "Use gofmt for formatting",
+        "Document exported functions, types, and packages",
+        "Prefer synchronous code over channels when possible"
+      ],
+      "anti_patterns": [
+        {
+          "name": "Ignoring errors",
+          "bad": "result, _ := doSomething()",
+          "good": "result, err := doSomething()\nif err != nil {\n    return fmt.Errorf(\"failed: %w\", err)\n}"
+        },
+        {
+          "name": "Defer in loop",
+          "bad": "for _, f := range files {\n    file, _ := os.Open(f)\n    defer file.Close()\n}",
+          "good": "for _, f := range files {\n    func() {\n        file, _ := os.Open(f)\n        defer file.Close()\n        process(file)\n    }()\n}"
+        },
+        {
+          "name": "Goroutine leak",
+          "bad": "go func() {\n    for {\n        work()\n    }\n}()",
+          "good": "go func() {\n    for {\n        select {\n        case <-ctx.Done():\n            return\n        default:\n            work()\n        }\n    }\n}()"
+        }
+      ],
+      "naming_conventions": {
+        "package": "lowercase, no underscores",
+        "file": "lowercase_with_underscores.go",
+        "exported": "PascalCase (starts with uppercase)",
+        "unexported": "camelCase (starts with lowercase)",
+        "interface": "Single-method interfaces use -er suffix (Reader, Writer)",
+        "error_variables": "ErrNotFound, ErrInvalidInput",
+        "constants": "PascalCase or UPPER_SNAKE_CASE"
+      },
+      "common_mistakes": [
+        "Copying sync.Mutex",
+        "Range over map in non-deterministic order",
+        "Using value receiver when pointer is needed",
+        "Not handling context cancellation",
+        "Excessive interface usage",
+        "Premature abstraction"
+      ]
+    },
+    "python": {
+      "best_practices": [
+        "Follow PEP 8 style guide",
+        "Use type hints for public APIs",
+        "Use context managers (with statement) for resources",
+        "Prefer list comprehensions over loops",
+        "Use f-strings for string formatting",
+        "Handle exceptions explicitly",
+        "Use enumerate() instead of range(len())",
+        "Use is for None comparisons",
+        "Document with docstrings (Google or NumPy style)",
+        "Use virtual environments"
+      ],
+      "anti_patterns": [
+        {
+          "name": "Mutable default argument",
+          "bad": "def append_to(element, target=[]):\n    target.append(element)\n    return target",
+          "good": "def append_to(element, target=None):\n    if target is None:\n        target = []\n    target.append(element)\n    return target"
+        },
+        {
+          "name": "Bare except",
+          "bad": "try:\n    risky()\nexcept:\n    pass",
+          "good": "try:\n    risky()\nexcept (ValueError, TypeError) as e:\n    logger.error(f\"Error: {e}\")"
+        },
+        {
+          "name": "Using 'is' for value comparison",
+          "bad": "if x is True:",
+          "good": "if x:"
+        }
+      ],
+      "naming_conventions": {
+        "module": "lowercase_with_underscores",
+        "function": "lowercase_with_underscores",
+        "variable": "lowercase_with_underscores",
+        "class": "PascalCase",
+        "constant": "UPPER_CASE_WITH_UNDERSCORES",
+        "private": "_leading_underscore",
+        "method": "lowercase_with_underscores"
+      },
+      "common_mistakes": [
+        "Modifying list while iterating",
+        "Not closing files (use context manager)",
+        "Using eval() or exec() with user input",
+        "Unpickling untrusted data",
+        "Using assert for input validation",
+        "Not using virtual environments"
+      ],
+      "dangerous_functions": [
+        "eval()",
+        "exec()",
+        "pickle.loads() with untrusted data",
+        "yaml.load() (use yaml.safe_load())",
+        "os.system() with user input",
+        "subprocess with shell=True"
+      ]
+    },
+    "javascript": {
+      "best_practices": [
+        "Use const by default, let when needed, never var",
+        "Use async/await instead of raw promises",
+        "Handle promise rejections",
+        "Use destructuring for objects and arrays",
+        "Use optional chaining (?.) and nullish coalescing (??)",
+        "Avoid mutating arrays (use map, filter, reduce)",
+        "Use arrow functions appropriately",
+        "Clean up event listeners and subscriptions",
+        "Use === instead of ==",
+        "Handle errors in async functions"
+      ],
+      "anti_patterns": [
+        {
+          "name": "Not handling promise rejection",
+          "bad": "fetch('/api').then(r => r.json());",
+          "good": "fetch('/api')\n  .then(r => r.json())\n  .catch(err => console.error(err));"
+        },
+        {
+          "name": "Memory leak with event listener",
+          "bad": "componentDidMount() {\n  window.addEventListener('resize', handler);\n}",
+          "good": "componentWillUnmount() {\n  window.removeEventListener('resize', handler);\n}"
+        },
+        {
+          "name": "Modifying array during iteration",
+          "bad": "array.forEach((item, i) => {\n  if (condition) array.splice(i, 1);\n});",
+          "good": "array = array.filter(item => !condition);"
+        }
+      ],
+      "naming_conventions": {
+        "variable": "camelCase",
+        "function": "camelCase",
+        "class": "PascalCase",
+        "constant": "UPPER_SNAKE_CASE",
+        "private": "#private or _private",
+        "component": "PascalCase (React)"
+      },
+      "common_mistakes": [
+        "Using == instead of ===",
+        "Not using strict mode",
+        "Callback hell (use async/await)",
+        "Global variables pollution",
+        "Not cleaning up timers/intervals",
+        "Truthy/falsy confusion"
+      ]
+    },
+    "typescript": {
+      "best_practices": [
+        "Enable strict mode in tsconfig.json",
+        "Use interfaces for object shapes",
+        "Use type guards for runtime checks",
+        "Avoid using 'any' type",
+        "Use union types instead of enums when appropriate",
+        "Leverage type inference",
+        "Use readonly for immutable properties",
+        "Define return types for public APIs",
+        "Use generics for reusable components",
+        "Prefer unknown over any"
+      ],
+      "anti_patterns": [
+        {
+          "name": "Using 'any' type",
+          "bad": "function process(data: any): any { }",
+          "good": "function process(data: User): ProcessedData { }"
+        },
+        {
+          "name": "Type assertion without validation",
+          "bad": "const user = data as User;",
+          "good": "function isUser(data: unknown): data is User {\n  return typeof data === 'object' && /* validation */\n}\nif (isUser(data)) { /* use data as User */ }"
+        }
+      ],
+      "naming_conventions": {
+        "interface": "PascalCase",
+        "type_alias": "PascalCase",
+        "enum": "PascalCase",
+        "generic": "T, K, V (single uppercase letter or descriptive PascalCase)",
+        "namespace": "PascalCase"
+      },
+      "common_mistakes": [
+        "Overusing type assertions",
+        "Not enabling strict mode",
+        "Using 'any' to bypass type checking",
+        "Not using type guards",
+        "Ignoring TypeScript errors",
+        "Over-engineering types"
+      ]
+    }
+  },
+  "universal_principles": {
+    "solid": {
+      "single_responsibility": "A class/module should have one reason to change",
+      "open_closed": "Open for extension, closed for modification",
+      "liskov_substitution": "Subtypes must be substitutable for base types",
+      "interface_segregation": "Many specific interfaces > one general interface",
+      "dependency_inversion": "Depend on abstractions, not concretions"
+    },
+    "dry": "Don't Repeat Yourself - avoid code duplication",
+    "kiss": "Keep It Simple, Stupid - prefer simple solutions",
+    "yagni": "You Aren't Gonna Need It - don't over-engineer",
+    "composition_over_inheritance": "Prefer composition to inheritance"
+  },
+  "code_smells": [
+    {
+      "name": "Long Method",
+      "description": "Method/function is too long (>50 lines)",
+      "fix": "Extract smaller functions"
+    },
+    {
+      "name": "Large Class",
+      "description": "Class has too many responsibilities",
+      "fix": "Split into smaller, focused classes"
+    },
+    {
+      "name": "Too Many Parameters",
+      "description": "Function has more than 5 parameters",
+      "fix": "Use object/struct for parameters"
+    },
+    {
+      "name": "Duplicated Code",
+      "description": "Same or similar code appears in multiple places",
+      "fix": "Extract to shared function/method"
+    },
+    {
+      "name": "Dead Code",
+      "description": "Unused variables, functions, or imports",
+      "fix": "Remove dead code"
+    },
+    {
+      "name": "Magic Numbers",
+      "description": "Unexplained numeric literals",
+      "fix": "Use named constants"
+    },
+    {
+      "name": "Nested Conditionals",
+      "description": "Deeply nested if statements",
+      "fix": "Use guard clauses or extract methods"
+    },
+    {
+      "name": "Comment Overload",
+      "description": "Too many comments explaining what code does",
+      "fix": "Make code self-documenting"
+    }
+  ],
+  "testing_patterns": {
+    "good": [
+      "Tests are independent",
+      "Tests have clear names (test_should_return_error_when_input_invalid)",
+      "Tests follow AAA pattern (Arrange, Act, Assert)",
+      "Tests use descriptive assertions",
+      "Tests cover edge cases",
+      "Tests are fast"
+    ],
+    "bad": [
+      "Tests depend on each other",
+      "Tests have unclear names (test1, test2)",
+      "Tests test multiple things",
+      "Tests use production data",
+      "Tests are slow",
+      "Tests are flaky"
+    ]
+  }
+}
