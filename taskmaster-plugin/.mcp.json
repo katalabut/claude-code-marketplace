@@ -1,0 +1,10 @@
+{
+  "taskmaster-ai": {
+    "command": "npx",
+    "args": ["-y", "task-master-ai"],
+    "env": {
+      "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+      "TASK_MASTER_TOOLS": "standard"
+    }
+  }
+}

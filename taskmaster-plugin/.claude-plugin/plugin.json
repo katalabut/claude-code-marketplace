@@ -1,0 +1,10 @@
+{
+  "name": "taskmaster-plugin",
+  "version": "1.0.0",
+  "description": "Complete project management with Taskmaster MCP: PRD creation, task decomposition, and workflow automation. Supports /next, /run, /current commands for streamlined development workflow.",
+  "author": {
+    "name": "katalabut"
+  },
+  "keywords": ["taskmaster", "prd", "project-management", "tasks", "workflow", "mcp", "automation"],
+  "license": "MIT"
+}

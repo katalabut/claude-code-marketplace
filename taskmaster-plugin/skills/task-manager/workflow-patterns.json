@@ -1,0 +1,102 @@
+{
+  "version": "1.0.0",
+  "description": "Common workflow patterns and status transitions for task management",
+  "workflows": {
+    "feature_development": {
+      "phases": [
+        "Research & Planning",
+        "Design",
+        "Implementation",
+        "Testing",
+        "Code Review",
+        "Documentation",
+        "Deployment"
+      ],
+      "typical_duration": "1-2 weeks"
+    },
+    "bug_fix": {
+      "phases": [
+        "Reproduce",
+        "Diagnose",
+        "Fix",
+        "Test",
+        "Deploy"
+      ],
+      "typical_duration": "1-3 days"
+    },
+    "research_spike": {
+      "phases": [
+        "Research",
+        "Document Findings",
+        "Create POC",
+        "Present Recommendations"
+      ],
+      "typical_duration": "2-5 days"
+    }
+  },
+  "status_transitions": {
+    "pending": {
+      "can_transition_to": ["in-progress", "deferred", "cancelled"],
+      "prerequisites": ["dependencies_met", "resources_available"]
+    },
+    "in-progress": {
+      "can_transition_to": ["review", "done", "deferred", "pending"],
+      "prerequisites": []
+    },
+    "review": {
+      "can_transition_to": ["in-progress", "done"],
+      "prerequisites": ["work_complete"]
+    },
+    "done": {
+      "can_transition_to": [],
+      "prerequisites": ["acceptance_criteria_met", "reviewed"]
+    },
+    "deferred": {
+      "can_transition_to": ["pending"],
+      "prerequisites": []
+    },
+    "cancelled": {
+      "can_transition_to": [],
+      "prerequisites": ["stakeholder_approval"]
+    }
+  },
+  "priority_guidelines": {
+    "P0": {
+      "label": "Critical",
+      "description": "Blocks release, affects all users, data loss risk",
+      "sla": "Start immediately",
+      "examples": ["Authentication broken", "Payment processing down", "Data corruption"]
+    },
+    "P1": {
+      "label": "High",
+      "description": "Important feature, significant user impact",
+      "sla": "Start within 1 day",
+      "examples": ["Major feature", "Performance issue", "Security vulnerability"]
+    },
+    "P2": {
+      "label": "Medium",
+      "description": "Nice to have, moderate impact",
+      "sla": "Start within 1 week",
+      "examples": ["Minor feature", "UI improvement", "Optimization"]
+    },
+    "P3": {
+      "label": "Low",
+      "description": "Future consideration, minimal impact",
+      "sla": "When capacity available",
+      "examples": ["Polish", "Nice to have", "Rare edge case"]
+    }
+  },
+  "estimation_guidelines": {
+    "xs": { "hours": 0.5, "description": "Trivial change" },
+    "s": { "hours": 2, "description": "Simple task" },
+    "m": { "hours": 4, "description": "Standard task" },
+    "l": { "hours": 8, "description": "Complex task" },
+    "xl": { "hours": 16, "description": "Very complex (should be broken down)" }
+  },
+  "dependency_types": {
+    "finish_to_start": "Most common - B starts after A finishes",
+    "start_to_start": "B starts when A starts (parallel)",
+    "finish_to_finish": "B finishes when A finishes",
+    "start_to_finish": "Rare - B finishes when A starts"
+  }
+}

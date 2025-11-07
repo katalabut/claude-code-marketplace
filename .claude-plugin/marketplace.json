@@ -8,6 +8,11 @@
             "name": "code-review-plugin",
             "source": "./code-review-plugin",
             "description": "Comprehensive code review plugin with security analysis, quality checks, and PR review capabilities. Supports Go, Python, and JavaScript/TypeScript with GitHub integration."
+        },
+        {
+            "name": "taskmaster-plugin",
+            "source": "./taskmaster-plugin",
+            "description": "Complete project management with Taskmaster MCP: PRD creation, task decomposition, and workflow automation. Features /next, /run, /current commands for streamlined development workflow. Integrates AI-powered task management with Claude Code."
         }
     ]
 }
