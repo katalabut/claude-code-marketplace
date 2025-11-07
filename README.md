@@ -41,7 +41,7 @@ Complete project management with Taskmaster MCP integration for PRD creation, ta
 - ✨ Simplified 4-command interface for maximum efficiency
 
 **Commands:**
-- `/init` - Initialize Taskmaster in project
+- `/init-taskmaster` - Initialize Taskmaster in project
 - `/prd` - Manage PRDs (3 modes):
   - No params: Show PRD overview with task statistics
   - File path: Parse PRD, auto-create tag, analyze and expand tasks
@@ -106,7 +106,7 @@ echo 'export ANTHROPIC_API_KEY="sk-ant-your-key"' >> ~/.zshrc
 
 # Initialize in your project
 cd your-project
-/init
+/init-taskmaster
 
 # Create PRD from description
 /prd Build authentication system with OAuth 2.0 and JWT
@@ -122,7 +122,7 @@ cd your-project
 | Feature | Code Review | Taskmaster |
 |---------|-------------|------------|
 | **Primary Purpose** | Code quality & security | Project management |
-| **Commands** | 1 (`/review`) | 4 (`/init`, `/prd`, `/run`, `/next`) |
+| **Commands** | 1 (`/review`) | 4 (`/init-taskmaster`, `/prd`, `/run`, `/next`) |
 | **Agents** | 3 (review, security, performance) | 3 (PRD 🔵, decompose 🟢, execute 🟡) |
 | **Skills** | 2 (PR review, code quality) | 2 (PRD analyzer, task manager) |
 | **MCP Integration** | No | Yes (Taskmaster AI) |
@@ -154,7 +154,7 @@ cd your-project
 
 ```bash
 # 1. Initialize Taskmaster
-/init
+/init-taskmaster
 
 # 2. Create PRD from description (AI-powered)
 /prd Build authentication system with OAuth 2.0, JWT, and MFA support
@@ -231,7 +231,7 @@ claude-code-plugins/
 │   │   └── plugin.json
 │   ├── .mcp.json                 # MCP Taskmaster config
 │   ├── commands/
-│   │   ├── init.md               # Initialize project
+│   │   ├── init-taskmaster.md    # Initialize project
 │   │   ├── prd.md                # PRD management (3 modes)
 │   │   ├── run.md                # Task execution (2 modes)
 │   │   └── next.md               # Find next task
@@ -437,7 +437,7 @@ katalabut
 **Taskmaster Plugin Refactor**
 
 - 🎯 **Streamlined Commands**: Reduced from 7 to 4 essential commands
-  - `/init` - Simplified initialization (renamed from `/init-project`)
+  - `/init-taskmaster` - Initialize Taskmaster in project
   - `/prd` - Multi-mode PRD management (3 modes in one command)
   - `/run` - Dual-mode task execution (overview + specific task)
   - `/next` - Smart task finder and auto-starter

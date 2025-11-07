@@ -1,5 +1,5 @@
 ---
-name: init
+name: init-taskmaster
 description: Initialize Taskmaster in the current project, creating directory structure and configuration
 allowed-tools: Read, Write, Bash, mcp__*
 ---
