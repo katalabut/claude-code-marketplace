@@ -67,26 +67,26 @@ Complete project management with Taskmaster MCP integration for PRD creation, ta
 ### Prerequisites
 
 - Claude Code installed
-- Git
+- GitHub CLI (for Code Review Plugin): `brew install gh`
 
-### Install Plugins
+### Quick Start
 
-1. **Clone the marketplace:**
-   ```bash
-   cd ~/.claude/plugins
-   git clone https://github.com/katalabut/claude-code-marketplace.git
-   ```
+**Add the marketplace in Claude Code:**
 
-2. **Restart Claude Code**
+```bash
+/plugin marketplace add katalabut/claude-code-marketplace
+```
 
-3. **Plugins will be automatically available**
+That's it! All plugins are now available.
+
+**Restart Claude Code** to load the plugins.
 
 ### Plugin-Specific Setup
 
 #### Code Review Plugin
+
 ```bash
-# Install GitHub CLI (for PR reviews)
-brew install gh
+# Authenticate GitHub CLI (for PR reviews)
 gh auth login
 
 # Ready to use!
@@ -94,9 +94,15 @@ gh auth login
 ```
 
 #### Taskmaster Plugin
+
 ```bash
-# Set API key (required for MCP)
+# Set Anthropic API key (required for MCP integration)
 export ANTHROPIC_API_KEY="sk-ant-your-key"
+
+# Add to your shell profile for persistence (~/.zshrc or ~/.bashrc)
+echo 'export ANTHROPIC_API_KEY="sk-ant-your-key"' >> ~/.zshrc
+
+# Restart Claude Code to apply
 
 # Initialize in your project
 cd your-project
@@ -104,9 +110,6 @@ cd your-project
 
 # Create PRD from description
 /prd Build authentication system with OAuth 2.0 and JWT
-
-# Or parse existing PRD
-/prd docs/prd/my-feature-prd.md
 
 # Start working
 /next
