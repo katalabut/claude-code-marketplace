@@ -34,20 +34,27 @@ Complete project management with Taskmaster MCP integration for PRD creation, ta
 **Features:**
 - 📝 PRD (Product Requirements Document) creation and analysis
 - 🔄 AI-powered task decomposition
-- 🎯 Smart workflow automation with `/next`, `/run`, `/current`
+- 🎯 Smart workflow automation with streamlined commands
 - 📊 Progress tracking and status management
-- 🤖 3 specialized agents (prd-architect, task-decomposer, task-executor)
+- 🤖 3 specialized agents with color-coding (prd-architect 🔵, task-decomposer 🟢, task-executor 🟡)
 - 🎯 2 autonomous skills (prd-analyzer, task-manager)
+- ✨ Simplified 4-command interface for maximum efficiency
 
 **Commands:**
-- `/init-project` - Initialize Taskmaster
-- `/prd create "Description"` - Create PRD
-- `/prd parse file.md` - Parse PRD into tasks
-- `/next` - Get next available task
-- `/run [task-id]` - Execute task with guidance
-- `/current` - Show in-progress work
-- `/tasks` - List and filter tasks
-- `/expand [task-id]` - Break down complex tasks
+- `/init` - Initialize Taskmaster in project
+- `/prd` - Manage PRDs (3 modes):
+  - No params: Show PRD overview with task statistics
+  - File path: Parse PRD, auto-create tag, analyze and expand tasks
+  - Text description: Create PRD with AI, review, then parse
+- `/run` - Work on tasks (2 modes):
+  - No params: Show overview and auto-start next available task
+  - With ID: Execute specific task with step-by-step guidance
+- `/next` - Find and start next available task
+
+**Agent Color Coding:**
+- 🔵 **Blue** - PRD Architect (analysis, PRD creation)
+- 🟢 **Green** - Task Decomposer (task breakdown, dependencies)
+- 🟡 **Yellow** - Task Executor (step-by-step execution)
 
 **MCP Integration:** Taskmaster AI (npx -y task-master-ai)
 
@@ -93,10 +100,16 @@ export ANTHROPIC_API_KEY="sk-ant-your-key"
 
 # Initialize in your project
 cd your-project
-/init-project
+/init
 
-# Start using
-/prd create "Your feature description"
+# Create PRD from description
+/prd Build authentication system with OAuth 2.0 and JWT
+
+# Or parse existing PRD
+/prd docs/prd/my-feature-prd.md
+
+# Start working
+/next
 ```
 
 ---
@@ -106,8 +119,8 @@ cd your-project
 | Feature | Code Review | Taskmaster |
 |---------|-------------|------------|
 | **Primary Purpose** | Code quality & security | Project management |
-| **Commands** | 1 (`/review`) | 7 (`/init-project`, `/prd`, `/next`, etc.) |
-| **Agents** | 3 (review, security, performance) | 3 (PRD, decompose, execute) |
+| **Commands** | 1 (`/review`) | 4 (`/init`, `/prd`, `/run`, `/next`) |
+| **Agents** | 3 (review, security, performance) | 3 (PRD 🔵, decompose 🟢, execute 🟡) |
 | **Skills** | 2 (PR review, code quality) | 2 (PRD analyzer, task manager) |
 | **MCP Integration** | No | Yes (Taskmaster AI) |
 | **External Tools** | `gh`, `git` | Taskmaster MCP |
@@ -138,25 +151,32 @@ cd your-project
 
 ```bash
 # 1. Initialize Taskmaster
-/init-project
+/init
 
-# 2. Create Product Requirements Document
-/prd create "Build authentication system with OAuth and JWT"
+# 2. Create PRD from description (AI-powered)
+/prd Build authentication system with OAuth 2.0, JWT, and MFA support
 
-# 3. Parse PRD into tasks
-/prd parse docs/prd/authentication-system-prd.md
+# AI creates comprehensive PRD → Review → Approve → Auto-parsed!
 
-# 4. Start working on next task
+# 3. Start working (auto-finds next task)
 /next
+# 🟡 Task Executor guides you through implementation
 
-# 5. Execute the task
-/run 1.1.1
+# 4. Or check overview and start next
+/run
+# Shows overview → Auto-starts next available task
 
-# 6. Track progress
-/current
+# 5. Work on specific task
+/run 1.2.1
+# 🟡 Step-by-step guidance through subtasks
 
-# 7. Continue to next task
+# 6. Continue to next task
 /next
+# Repeat until all done!
+
+# 7. Check PRD status anytime
+/prd
+# Shows all PRDs with task statistics
 ```
 
 ### Combined Workflow
@@ -164,20 +184,19 @@ cd your-project
 Use both plugins together for complete development workflow:
 
 ```bash
-# 1. Plan with Taskmaster
-/prd create "Add user profile feature"
-/prd parse docs/prd/user-profile-prd.md
+# 1. Plan with Taskmaster (AI creates PRD)
+/prd Add user profile feature with avatar upload and bio
+
+# 2. Start first task (auto-guided)
 /next
+# 🟡 Task Executor: guides through implementation
 
-# 2. Implement the task
-/run 1.1.1
-# ... write code ...
-
-# 3. Review with Code Review Plugin
+# 3. Review code with Code Review Plugin
 /review
 
-# 4. Fix issues, mark task complete
+# 4. Fix any issues found, continue
 /next
+# Repeat cycle: implement → review → next
 ```
 
 ---
@@ -209,20 +228,17 @@ claude-code-plugins/
 │   │   └── plugin.json
 │   ├── .mcp.json                 # MCP Taskmaster config
 │   ├── commands/
-│   │   ├── init-project.md
-│   │   ├── prd.md
-│   │   ├── next.md
-│   │   ├── current.md
-│   │   ├── run.md
-│   │   ├── tasks.md
-│   │   └── expand.md
+│   │   ├── init.md               # Initialize project
+│   │   ├── prd.md                # PRD management (3 modes)
+│   │   ├── run.md                # Task execution (2 modes)
+│   │   └── next.md               # Find next task
 │   ├── agents/
-│   │   ├── prd-architect.md
-│   │   ├── task-decomposer.md
-│   │   └── task-executor.md
+│   │   ├── prd-architect.md      # 🔵 Blue - PRD creation
+│   │   ├── task-decomposer.md    # 🟢 Green - Task breakdown
+│   │   └── task-executor.md      # 🟡 Yellow - Execution guide
 │   ├── skills/
-│   │   ├── prd-analyzer/
-│   │   └── task-manager/
+│   │   ├── prd-analyzer/         # Auto PRD analysis
+│   │   └── task-manager/         # Auto task suggestions
 │   ├── templates/
 │   │   ├── prd-template.md
 │   │   └── task-structure.md
@@ -413,6 +429,28 @@ katalabut
 
 ## Changelog
 
+### v1.1.0 (2025-01-08)
+
+**Taskmaster Plugin Refactor**
+
+- 🎯 **Streamlined Commands**: Reduced from 7 to 4 essential commands
+  - `/init` - Simplified initialization (renamed from `/init-project`)
+  - `/prd` - Multi-mode PRD management (3 modes in one command)
+  - `/run` - Dual-mode task execution (overview + specific task)
+  - `/next` - Smart task finder and auto-starter
+  - Removed: `/current`, `/tasks`, `/expand` (functionality integrated)
+
+- 🎨 **Color-Coded Agents**: Visual agent activity markers
+  - 🔵 Blue - PRD Architect (PRD creation and analysis)
+  - 🟢 Green - Task Decomposer (task breakdown and dependencies)
+  - 🟡 Yellow - Task Executor (step-by-step implementation)
+
+- ✨ **Enhanced Workflows**:
+  - `/prd` with no params shows overview of all PRDs + statistics
+  - `/run` with no params shows overview + auto-starts next task
+  - Auto-expansion of complex tasks
+  - Seamless agent integration throughout workflow
+
 ### v1.0.0 (2025-01-07)
 
 **Initial Release**
@@ -430,7 +468,7 @@ Added two professional plugins:
    - MCP Taskmaster integration
    - PRD creation and management
    - AI-powered task decomposition
-   - Workflow automation (/next, /run, /current)
+   - Workflow automation
    - 7 commands, 3 agents, 2 skills
 
 ---
