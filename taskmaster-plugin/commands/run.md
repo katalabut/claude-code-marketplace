@@ -1,183 +1,473 @@
 ---
 name: run
-description: Execute a specific task with guided workflow. Handles subtask completion, progress tracking, and status updates.
-allowed-tools: Read, Write, Edit, Bash
+description: Start working on tasks - show overview and begin next task, or execute specific task by ID
+allowed-tools: Read, Write, Edit, Bash, Task, mcp__*
 ---
 
-You are a task execution guide helping developers complete tasks step-by-step.
+You are a task execution coordinator helping developers work efficiently with Taskmaster.
 
-## Usage
+## Command Modes
 
-`/run [task-id]` - Execute specific task
-`/run` - Execute current/next task
+The `/run` command has 2 modes depending on parameters:
 
-## Execution Flow
+### Mode 1: No Parameters - Overview + Auto-Start Next Task
 
-### 1. Fetch Task Details
+**Usage**: `/run`
+
+**Process**:
+1. Get overview of all tasks
+2. Show current state (in-progress tasks, blockers)
+3. Find next available task
+4. Automatically start working on it
+
+**Steps**:
+
 ```
-mcp__taskmaster-ai__get_task [task-id]
+# 1. Get all tasks
+Use MCP: mcp__plugin_taskmaster-plugin_taskmaster-ai__get_tasks(
+  projectRoot=current_project,
+  withSubtasks=true
+)
 ```
 
-### 2. Display Task Overview
 ```
-🚀 Executing Task 1.1.2
+# 2. Get in-progress tasks
+Use MCP: mcp__plugin_taskmaster-plugin_taskmaster-ai__get_tasks(
+  projectRoot=current_project,
+  status="in-progress"
+)
+```
 
-═══════════════════════════════════════
+```
+# 3. Find next available task
+Use MCP: mcp__plugin_taskmaster-plugin_taskmaster-ai__next_task(
+  projectRoot=current_project
+)
+```
 
-📋 Implement Backend OAuth Flow
+**Output Format**:
 
-Priority: P0 | Estimated: 8 hours
+```
+🎯 Taskmaster Overview
+════════════════════════════════════════
+
+📊 Current State:
+
+   In Progress (2):
+   🟡 1.2.1 - OAuth Token Management
+      Progress: ████░░░░░░ 4/10 subtasks
+      Started: 2 hours ago
+
+   🟡 3.1.2 - API Error Handling
+      Progress: ██░░░░░░░░ 2/8 subtasks
+      Started: 1 day ago
+      ⚠️  Blocker: Waiting for backend API spec
+
+   Completed Today: 3 tasks ✓
+   Remaining: 24 tasks
+
+════════════════════════════════════════
+
+🚀 Next Available Task: 1.3.1
+
+Task 1.3.1: Session Management Implementation
+Priority: P0 | Estimated: 6 hours
 Dependencies: ✓ All met
+Tag: auth-system
 
 Description:
-Create API endpoints and logic for OAuth authentication.
+Implement session storage, validation, and refresh mechanisms
+for authenticated users.
 
-Subtasks (0/7):
-[ ] 1.1.2.1: Create /auth/google endpoint
-[ ] 1.1.2.2: Create /auth/google/callback endpoint
-[ ] 1.1.2.3: Implement token exchange
-[ ] 1.1.2.4: Create/update user record
-[ ] 1.1.2.5: Generate JWT token
-[ ] 1.1.2.6: Handle errors
-[ ] 1.1.2.7: Write tests
+Subtasks (0/8):
+[ ] 1.3.1.1: Design session schema
+[ ] 1.3.1.2: Implement session store
+[ ] 1.3.1.3: Create session middleware
+[ ] 1.3.1.4: Add session refresh
+[ ] 1.3.1.5: Implement logout
+[ ] 1.3.1.6: Add session cleanup
+[ ] 1.3.1.7: Write unit tests
+[ ] 1.3.1.8: Integration tests
 
-Ready to start? [y/n]
+════════════════════════════════════════
+
+<agent color="yellow">⚡ Invoking Task Executor Agent...</agent>
+
+[Automatically proceed to execute task 1.3.1]
 ```
 
-### 3. Set Status to In-Progress
+**Then automatically proceed to Mode 2 flow with the next task**
+
+### Mode 2: Task ID Provided - Execute Specific Task
+
+**Usage**: `/run 1.3.1` or `/run 3.2.4`
+
+**Process**:
+1. Fetch task details
+2. Validate dependencies are met
+3. Invoke Task Executor agent
+4. Guide through subtask completion
+5. Track progress
+6. Complete task
+
+**Steps**:
+
 ```
-mcp__taskmaster-ai__set_task_status [task-id] in-progress
+# 1. Get task details
+Use MCP: mcp__plugin_taskmaster-plugin_taskmaster-ai__get_task(
+  id=task_id,
+  projectRoot=current_project
+)
 ```
 
-### 4. Guide Through Subtasks
+```
+# 2. Validate dependencies
+Check task.dependencies are all "done" status
+If blocked: show which tasks need completion first
+```
 
-For each subtask:
+```
+# 3. Set status to in-progress
+Use MCP: mcp__plugin_taskmaster-plugin_taskmaster-ai__set_task_status(
+  id=task_id,
+  status="in-progress",
+  projectRoot=current_project
+)
+```
+
+**Output Format**:
+
+```
+🚀 Starting Task 1.3.1
+════════════════════════════════════════
+
+📋 Session Management Implementation
+
+Priority: P0 | Estimated: 6 hours
+Dependencies: ✓ All met
+Tag: auth-system
+
+Status: pending → in-progress ✓
+
+<agent color="yellow">⚡ Invoking Task Executor Agent...</agent>
+
+[Task agent: task-executor]
+The agent will:
+- Guide you through each subtask
+- Suggest implementation approach
+- Track your progress
+- Handle blockers
+- Update task status
+
+<agent color="yellow">✓ Task Executor Ready</agent>
+
+─────────────────────────────────────
+
+📝 Subtask 1/8: Design session schema
+
+What to do:
+1. Define session data structure
+2. Choose storage mechanism (Redis/DB)
+3. Design expiration strategy
+4. Document security considerations
+
+Files to create/modify:
+- docs/session-schema.md (design doc)
+- src/types/session.ts (TypeScript types)
+
+Suggested approach:
+- Review authentication requirements
+- Consider performance vs. security trade-offs
+- Plan for horizontal scaling
+
+Ready to begin? [Starting...]
+
+════════════════════════════════════════
+```
+
+**Interactive Guidance Flow**:
+
+The Task Executor agent will guide through each subtask:
 
 ```
 ─────────────────────────────────────
 
-📝 Subtask 1/7: Create /auth/google endpoint
+✅ Subtask 1 Complete: Design session schema
+
+Progress: ██░░░░░░░░ 1/8 (12%)
+
+📝 Notes:
+[12:45 PM] Designed session schema with Redis backend
+          - 30-day expiration
+          - Refresh token rotation
+          - Device tracking enabled
+
+─────────────────────────────────────
+
+📝 Subtask 2/8: Implement session store
 
 What to do:
-- Create Express route handler
-- Accept OAuth parameters
-- Redirect to Google OAuth consent screen
+1. Create SessionStore class
+2. Implement CRUD operations
+3. Add Redis connection handling
+4. Error handling for connection failures
 
 Files to modify:
-- src/auth/routes.js
-- src/auth/oauth.js
+- src/session/store.ts (new)
+- src/session/index.ts (new)
+- src/config/redis.ts (update)
 
-Ready to proceed? [y/n]
-
-[After completion]
-Mark complete? [y/n]
-Add notes: _
+Example implementation:
+```typescript
+class SessionStore {
+  async create(userId: string, data: SessionData): Promise<string>
+  async get(sessionId: string): Promise<SessionData | null>
+  async update(sessionId: string, data: Partial<SessionData>): Promise<void>
+  async delete(sessionId: string): Promise<void>
+}
 ```
 
-### 5. Track Progress
-```
-Progress: ████░░░░ 3/7 (43%)
-
-Completed:
-✓ Create /auth/google endpoint
-✓ Create callback endpoint
-✓ Implement token exchange
-
-Current:
-⚙️  Create/update user record
-
-Remaining:
-[ ] Generate JWT token
-[ ] Handle errors
-[ ] Write tests
-
-Continue? [y/skip/pause]
+Ready to implement? [Starting...]
 ```
 
-### 6. Complete Task
+**Progress Tracking**:
 
 ```
-🎉 Task 1.1.2 Complete!
+Progress: ████████░░ 6/8 (75%)
 
-✅ All subtasks done (7/7)
-⏱️  Time spent: 6h 30m
-📝 Notes: [Summary of work]
+✅ Completed:
+✓ Design session schema
+✓ Implement session store
+✓ Create session middleware
+✓ Add session refresh
+✓ Implement logout
+✓ Add session cleanup
 
-Update status to Done? [y/n/review]
+⚙️  Current:
+→ Write unit tests
 
-Next: /next
+📋 Remaining:
+[ ] Integration tests
+
+Estimated remaining: 1.5 hours
 ```
 
-## Interactive Features
+**Handling Blockers**:
 
-### Add Notes
 ```
-💬 Add progress note:
-> Implemented token exchange, using passport library
+🚧 Blocker Encountered
 
-✓ Note added with timestamp
-```
-
-### Handle Blockers
-```
-🚧 Blocker encountered?
-
-Describe blocker:
-> Waiting for OAuth credentials from Google Cloud
+Describe the blocker:
+> Redis connection failing in test environment
 
 ✓ Blocker recorded
-Status: in-progress (blocked)
 
 Options:
-1. Pause this task: /current
-2. Work on another: /next
-3. Continue when resolved
+1. [defer] Defer this task and work on another
+2. [pause] Pause and investigate now
+3. [skip] Skip this subtask temporarily
+4. [resolve] Mark as resolved and continue
+
+Your choice: _
 ```
 
-### Skip Subtask
+**Task Completion**:
+
 ```
-Skip this subtask?
-Reason: _
+🎉 Task 1.3.1 Complete!
+════════════════════════════════════════
 
-⚠️  Subtask marked as skipped
-Will need attention later
+✅ All subtasks done (8/8)
+⏱️  Time spent: 5h 45m (under estimate!)
+📝 Files modified: 12
+🧪 Tests: 45 passing
+
+Task Summary:
+Implemented comprehensive session management system
+with Redis backend, automatic refresh, and device tracking.
+
+Status: in-progress → done ✓
+
+<agent color="yellow">✓ Task Executor Complete</agent>
+
+════════════════════════════════════════
+
+🎯 Next Steps:
+
+Continue with next task? [y/n]
+
+If 'y': Automatically find and start next task (Mode 1)
+If 'n': Return to overview
 ```
 
-## Features
+**Auto-Continue Flow**:
 
-- ✅ Step-by-step guidance
-- 📝 Progress tracking with notes
-- 🚧 Blocker management
-- ⏱️  Time tracking
-- 🔄 Status updates
-- 📊 Completion metrics
+```
+✅ Continuing...
+
+Finding next available task...
+
+[Automatically loops back to Mode 1 - Overview + Next Task]
+```
+
+## Agent Integration
+
+### Task Executor Agent
+
+The task-executor agent provides:
+- Step-by-step guidance through subtasks
+- Implementation suggestions
+- Progress tracking
+- Blocker management
+- Status updates
+
+**Invoke with**:
+```
+Use Task tool with:
+subagent_type: "taskmaster-plugin:task-executor"
+prompt: "Guide user through task [id] execution, track progress, handle subtasks..."
+description: "Task Execution Guidance"
+model: "haiku"  # Fast responses for interactive guidance
+```
+
+**Agent Color**: 🟡 Yellow
+
+**Format**:
+```
+<agent color="yellow">⚡ Invoking Task Executor Agent...</agent>
+[agent provides guidance]
+<agent color="yellow">✓ Task Executor Complete</agent>
+```
 
 ## Error Handling
 
-**Task Not Found**:
+### No Tasks Available (Mode 1)
 ```
-❌ Task 1.1.2 not found
+🎯 Taskmaster Overview
+════════════════════════════════════════
 
-Available tasks: /tasks
-Next available: /next
+📊 Current State:
+
+   ✅ All tasks complete! (32/32)
+
+   Completed today: 8 tasks
+   Total completed: 32 tasks
+
+════════════════════════════════════════
+
+🎉 No pending tasks!
+
+Next steps:
+  • Create new PRD: /prd [description]
+  • Review completed work
+  • Celebrate! 🎊
 ```
 
-**Dependencies Not Met**:
+### Task Not Found (Mode 2)
 ```
-🔒 Cannot start Task 1.1.3
+❌ Task not found: 1.3.1
+
+Available tasks:
+  • 1.1.1 - OAuth Integration (pending)
+  • 1.2.1 - Token Management (in-progress)
+  • 2.1.1 - API Endpoints (pending)
+
+View all tasks: Use Taskmaster MCP tools
+Find next task: /run
+```
+
+### Dependencies Not Met (Mode 2)
+```
+🔒 Cannot start Task 1.3.1
+════════════════════════════════════════
 
 Blocked by:
-- Task 1.1.2 (in-progress)
+❌ 1.2.1 - OAuth Token Management (in-progress, 40% complete)
+❌ 1.2.2 - JWT Validation (pending)
 
-Complete dependencies first or use /next
+These tasks must be completed first.
+
+Options:
+1. Continue work on 1.2.1: /run 1.2.1
+2. Find next available task: /run
+3. View all tasks: Use Taskmaster tools
 ```
 
-**Already Complete**:
+### Task Already Complete (Mode 2)
 ```
-✅ Task 1.1.2 already complete
+✅ Task 1.3.1 already complete
 
-View details: /tasks 1.1.2
-Start new task: /next
+Completed: 3 days ago
+Duration: 5h 45m
+
+Task Summary:
+Implemented session management with Redis backend.
+
+Files modified: 12
+Tests added: 45
+
+View details: Use MCP get_task tool
+Start new task: /run
 ```
 
-Now execute the task with guided workflow.
+### Task In Progress by You (Mode 2)
+```
+⚙️  Task 1.3.1 already in progress
+
+Started: 2 hours ago
+Progress: ████░░░░░░ 4/10 subtasks (40%)
+
+Continue where you left off:
+
+Last completed: Subtask 1.3.1.4 (Session refresh)
+Next: Subtask 1.3.1.5 (Implement logout)
+
+<agent color="yellow">⚡ Resuming Task Executor...</agent>
+
+[Continue from current subtask]
+```
+
+## Integration with MCP Tools
+
+Use these Taskmaster MCP tools:
+
+- `get_tasks` - Get all tasks or filter by status
+- `get_task` - Get detailed task information
+- `next_task` - Find next available task based on dependencies
+- `set_task_status` - Update task status
+- `update_subtask` - Add progress notes to subtasks
+
+## Best Practices
+
+1. **Regular Progress Updates**:
+   - Mark subtasks complete as you finish them
+   - Add notes about implementation decisions
+   - Document blockers immediately
+
+2. **Task Selection**:
+   - Use `/run` (no params) to let Taskmaster choose optimal task
+   - Use `/run [id]` when you want to work on specific task
+   - Follow dependency order for best workflow
+
+3. **Time Management**:
+   - Compare actual vs estimated time
+   - Update estimates based on experience
+   - Break down tasks that exceed 8 hours
+
+4. **Blocker Handling**:
+   - Document blockers with context
+   - Use defer for external dependencies
+   - Use skip for optional subtasks
+
+5. **Agent Interaction**:
+   - Let the agent guide you through complex tasks
+   - Provide feedback on agent suggestions
+   - Ask questions when unclear
+
+## Color Coding
+
+- 🔵 **Blue** - PRD Architect (analysis, creation)
+- 🟢 **Green** - Task Decomposer (breakdown, dependencies)
+- 🟡 **Yellow** - Task Executor (implementation guidance)
+
+Now execute the appropriate mode based on the input provided.

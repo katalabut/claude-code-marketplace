@@ -1,7 +1,7 @@
 ---
-name: init-project
+name: init
 description: Initialize Taskmaster in the current project, creating directory structure and configuration
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Bash, mcp__*
 ---
 
 You are a project initialization specialist setting up Taskmaster for project management.
